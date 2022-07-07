@@ -34,9 +34,9 @@ namespace DataAccess.Concrete.EntityFramework
 
         public Car Get(Expression<Func<Car, bool>> filter)
         {
-            using (resource)
+            using (CarContext context = new CarContext())
             {
-
+                return context.Set<Car>().SingleOrDefault(filter);
             }
         }
 
@@ -50,7 +50,11 @@ namespace DataAccess.Concrete.EntityFramework
 
         public void Update(Car entity)
         {
-            throw new NotImplementedException();
+            using (CarContext context = new CarContext())
+            {
+                context.Entry(entity).State = EntityState.Modified;
+                context.SaveChanges();
+            }
         }
     }
 }
