@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Entities.Concrete;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Core.DataAccess;
 
-namespace DataAccess.Abstract
+namespace Core.Entities
 {
-    public interface IColorDal : IEntityRepository<Color>
+    public interface IEntity
     {
     }
 }
