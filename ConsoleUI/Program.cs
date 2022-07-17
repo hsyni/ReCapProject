@@ -24,7 +24,9 @@ CarManager carManager = new CarManager(new EfCarDal());
 //    Console.WriteLine(brand.Name);
 //}
 
-foreach (var car in carManager.GetCarDetail())
+var result = carManager.GetCarDetail();
+
+foreach (var car in result.Data)
 {
     Console.WriteLine(car.CarName + "/" + car.ColorName + "/" + car.DailyPrice);
 }
