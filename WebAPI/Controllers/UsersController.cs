@@ -7,19 +7,20 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ColorsController : ControllerBase
+    public class UsersController : ControllerBase
     {
-        IColorService _colorService;
+        IUserService _userService;
 
-        public ColorsController(IColorService colorService)
+        public UsersController(IUserService userService)
         {
-            _colorService = colorService;
+            _userService = userService;
         }
 
-        [HttpGet("getallcolors")]
-        public IActionResult GetAllColors()
+        [HttpGet("getallusers")]
+        public IActionResult GetAllUsers()
         {
-            var result = _colorService.GetAll();
+
+            var result = _userService.GetAll();
             if (result.Success)
             {
                 return Ok(result);
@@ -27,10 +28,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getcolorsbyid")]
-        public IActionResult GetColorsById(int id)
+        [HttpGet("getuserbyid")]
+        public IActionResult GetById(int id)
         {
-            var result = _colorService.GetById(id);
+            var result = _userService.GetById(id);
             if (result.Success)
             {
                 return Ok(result);
@@ -38,10 +39,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("insertcolor")]
-        public IActionResult InsertColor(Color color)
+        [HttpPost("insertuser")]
+        public IActionResult InsertUser(User user)
         {
-            var result = _colorService.Insert(color);
+            var result = _userService.Insert(user);
             if (result.Success)
             {
                 return Ok(result);
@@ -49,10 +50,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("updatecolor")]
-        public IActionResult UpdateColor(Color color)
+        [HttpPost("updateuser")]
+        public IActionResult UpdateUser(User user)
         {
-            var result = _colorService.Update(color);
+            var result = _userService.Update(user);
             if (result.Success)
             {
                 return Ok(result);
@@ -60,15 +61,16 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("deletecolor")]
-        public IActionResult DeleteColor(Color color)
+        [HttpPost("deleteuser")]
+        public IActionResult DeleteUser(User user)
         {
-            var result = _colorService.Delete(color);
+            var result = _userService.Delete(user);
             if (result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
         }
+
     }
 }
