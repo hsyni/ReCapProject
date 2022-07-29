@@ -15,6 +15,7 @@ namespace Business.Concrete
     public class UserManager : IUserService
     {
         IUserDal _userDal;
+
         public IResult Delete(User user)
         {
             _userDal.Delete(user);
@@ -31,7 +32,7 @@ namespace Business.Concrete
             return new SuccessDataResult<User>(_userDal.Get(u => u.Id == id));
         }
 
-        public IDataResult<User> GetByMail(string email)
+        public IResult GetByMail(string email)
         {
             return new SuccessDataResult<User>(_userDal.Get(filter: u => u.Email == email));
         }
@@ -41,7 +42,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetClaims(user));
         }
 
-        public IResult Insert(User user)
+        public IResult Add(User user)
         {
             _userDal.Add(user);
             return new SuccessResult(Messages.Added);
@@ -52,5 +53,7 @@ namespace Business.Concrete
             _userDal.Update(user);
             return new SuccessResult(Messages.Updated);
         }
+
+
     }
 }

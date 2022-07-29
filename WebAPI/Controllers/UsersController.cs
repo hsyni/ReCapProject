@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Core.Entities.Concrete;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace WebAPI.Controllers
         [HttpPost("insertuser")]
         public IActionResult InsertUser(User user)
         {
-            var result = _userService.Insert(user);
+            var result = _userService.Add(user);
             if (result.Success)
             {
                 return Ok(result);
