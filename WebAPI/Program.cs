@@ -1,31 +1,35 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Business.Abstract;
-using Business.Concrete;
 using Business.DependencyResolvers.Autofac;
+using Core.DependencyResolvers;
+using Core.Extensions;
+using Core.Utilities.IoC;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.JWT;
-using DataAccess.Abstract;
-using DataAccess.Concrete.EntityFramework;
-using FluentAssertions.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureContainer<ContainerBuilder>(builder =>
+    {
+        builder.RegisterModule(new AutofacBusinessModule());
+    });
+
 // Add services to the container.
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()).ConfigureContainer<ContainerBuilder>(builder =>
-{
-    builder.RegisterModule(new AutofacBusinessModule());
-});
 
 builder.Services.AddControllers();
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "AllowOrigin", configurePolicy: builder => builder.WithOrigins("http://localhost:3000"));
+    options.AddPolicy("AllowOrigin",
+        builder => builder.WithOrigins("http://localhost:3000"));
 });
 
-var tokenOptions = builder.Configuration.GetSection(key: "TokenOptions").Get<TokenOptions>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+var tokenOptions = builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -41,19 +45,35 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddDependencyResolvers(new ICoreModule[]
+{
+    new CoreModule()
+});
 
+
+//builder.Services.AddSingleton<IBrandService, BrandManager>();
+//builder.Services.AddSingleton<IBrandDal, EfBrandDal>();
 
 //builder.Services.AddSingleton<ICarService, CarManager>();
 //builder.Services.AddSingleton<ICarDal, EfCarDal>();
-//builder.Services.AddSingleton<IBrandService, BrandManager>();
-//builder.Services.AddSingleton<IBrandDal, EfBrandDal>();
+
 //builder.Services.AddSingleton<IColorService, ColorManager>();
 //builder.Services.AddSingleton<IColorDal, EfColorDal>();
+
 //builder.Services.AddSingleton<ICustomerService, CustomerManager>();
 //builder.Services.AddSingleton<ICustomerDal, EfCustomerDal>();
+
+//builder.Services.AddSingleton<IRentalService, RentalManager>();
+//builder.Services.AddSingleton<IRentalDal, EfRentalDal>();
+
+//builder.Services.AddSingleton<IUserService, UserManager>();
+//builder.Services.AddSingleton<IUserDal, EfUserDal>();
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -64,13 +84,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseCors(builder => builder.WithOrigins("http://localhost:3000").AllowAnyHeader());
 
-app.UseAuthorization();
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 

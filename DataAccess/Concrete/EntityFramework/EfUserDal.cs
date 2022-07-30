@@ -19,12 +19,11 @@ namespace DataAccess.Concrete.EntityFramework
             {
                 var result = from operationClaim in context.OperationClaims
                              join userOperationClaim in context.UserOperationClaims
-                             on operationClaim.Id equals userOperationClaim.OperationClaimId
-                             join us in context.Users
-                             on userOperationClaim.UserId equals us.Id
+                                 on operationClaim.Id equals userOperationClaim.OperationClaimId
                              where userOperationClaim.UserId == user.Id
                              select new OperationClaim { Id = operationClaim.Id, Name = operationClaim.Name };
                 return result.ToList();
+
             }
         }
     }
